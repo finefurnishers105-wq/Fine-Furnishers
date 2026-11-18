@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gratitude Journal</title>
+  <meta name="description" content="Gratitude Journal is a simple, private Android app for writing down three good things each day, tracking your mood and building a daily habit. Works offline, no account needed.">
+  <meta name="theme-color" content="#2F8F75" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1A1A2E" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Gratitude Journal">
+  <meta property="og:description" content="A simple, private Android app for writing down three good things each day.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%232F8F75'/%3E%3Cpath fill='%23FFF7EC' d='M256 214C240 170 200 146 165 146 120 146 88 182 88 232c0 88 112 148 168 218 56-70 168-130 168-218 0-50-32-86-77-86-35 0-75 24-91 68z'/%3E%3Crect x='190' y='231' width='132' height='18' rx='9' fill='%23F4A640'/%3E%3Crect x='200' y='270' width='114' height='18' rx='9' fill='%23F4A640'/%3E%3Crect x='220' y='309' width='72' height='18' rx='9' fill='%23F4A640'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --primary: #2F8F75;
+      --primary-strong: #23735E;
+      --on-primary: #FFFFFF;
+      --primary-container: #CDEFE3;
+      --on-primary-container: #0B3D30;
+      --secondary-container: #FFE6C2;
+      --on-secondary-container: #4A2C00;
+      --background: #FAFAFA;
+      --surface: #FFFFFF;
+      --on-surface: #1B1C1E;
+      --on-surface-variant: #5C6461;
+      --outline: #D5DDDA;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary: #7FD6B9;
+        --primary-strong: #A6E6CF;
+        --on-primary: #003828;
+        --primary-container: #1F5A4A;
+        --on-primary-container: #CDEFE3;
+        --secondary-container: #5A3B10;
+        --on-secondary-container: #FFE6C2;
+        --background: #1A1A2E;
+        --surface: #16213E;
+        --on-surface: #E6E8F0;
+        --on-surface-variant: #AEB6C8;
+        --outline: #2E3B5E;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--primary); }
+
+    .wrap {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Intro */
+    .intro {
+      padding: 56px 0 40px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(11, 61, 48, .2);
+    }
+
+    h1 {
+      margin: 24px 0 8px;
+      font-size: clamp(1.9rem, 7vw, 2.6rem);
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+
+    .tagline {
+      margin: 0 auto;
+      max-width: 520px;
+      color: var(--on-surface-variant);
+      font-size: 1.1rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0 28px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .badges li {
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 28px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: var(--on-primary);
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color .15s ease, transform .15s ease;
+    }
+
+    .button:hover { background: var(--primary-strong); color: var(--on-primary); }
+    .button:active { transform: scale(.98); }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    a:focus-visible {
+      outline: 3px solid #C77A1E;
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    /* Sections */
+    section.wrap {
+      padding-top: 36px;
+      padding-bottom: 36px;
+      border-top: 1px solid var(--outline);
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-size: 1.5rem;
+      line-height: 1.3;
+    }
+
+    .lead {
+      margin: 0 0 20px;
+      color: var(--on-surface-variant);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .item {
+      padding: 18px;
+      border: 1px solid var(--outline);
+      border-radius: 16px;
+      background: var(--surface);
+    }
+
+    .item h3 {
+      margin: 0 0 4px;
+      font-size: 1.05rem;
+    }
+
+    .item p {
+      margin: 0;
+      color: var(--on-surface-variant);
+      font-size: .95rem;
+    }
+
+    .steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+      display: grid;
+      gap: 12px;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-weight: 700;
+      font-size: .9rem;
+    }
+
+    .steps strong { display: block; }
+    .steps span { color: var(--on-surface-variant); font-size: .95rem; }
+
+    .privacy {
+      padding: 22px;
+      border-radius: 18px;
+      background: var(--secondary-container);
+      color: var(--on-secondary-container);
+    }
+
+    .privacy h2 { margin-bottom: 8px; }
+    .privacy ul { margin: 0 0 20px; padding-left: 1.2rem; }
+    .privacy li { margin: 4px 0; }
+
+    footer {
+      margin-top: 24px;
+      padding: 24px 16px;
+      border-top: 1px solid var(--outline);
+      color: var(--on-surface-variant);
+      font-size: .875rem;
+      text-align: center;
+    }
+
+    footer p { margin: 2px 0; }
+
+    @media (min-width: 640px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .intro { padding: 72px 0 48px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .button { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="wrap intro">
+      <svg class="logo" viewBox="0 0 512 512" role="img" aria-label="Gratitude Journal app icon">
+        <defs>
+          <linearGradient id="logoBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4DC09D"/><stop offset=".55" stop-color="#2F8F75"/><stop offset="1" stop-color="#1F7560"/>
+          </linearGradient>
+        </defs>
+        <rect width="512" height="512" fill="url(#logoBg)"/>
+        <path fill="#FFF7EC" d="M256 214C240 170 200 146 165 146 120 146 88 182 88 232c0 88 112 148 168 218 56-70 168-130 168-218 0-50-32-86-77-86-35 0-75 24-91 68z"/>
+        <rect x="190" y="231" width="132" height="18" rx="9" fill="#F4A640"/>
+        <rect x="200" y="270" width="114" height="18" rx="9" fill="#F4A640"/>
+        <rect x="220" y="309" width="72" height="18" rx="9" fill="#F4A640"/>
+        <path fill="#FFD27A" d="M400 84c4 26 12 34 38 38-26 4-34 12-38 38-4-26-12-34-38-38 26-4 34-12 38-38z"/>
+        <path fill="#FFFFFF" d="M112 134c2 13 7 18 20 20-13 2-18 7-20 20-2-13-7-18-20-20 13-2 18-7 20-20z"/>
+      </svg>
+
+      <h1>Gratitude Journal</h1>
+      <p class="tagline">A calm, simple journal for writing down three good things each day and noticing what lifts you up.</p>
+
+      <ul class="badges" aria-label="Highlights">
+        <li>Android app</li>
+        <li>Works offline</li>
+        <li>No account</li>
+        <li>No ads</li>
+      </ul>
+
+      <div class="actions">
+        <a class="button" href="gratitude-journal-privacy-policy.html">Privacy Policy</a>
+      </div>
+    </header>
+
+    <section class="wrap" aria-labelledby="about-title">
+      <h2 id="about-title">About the app</h2>
+      <p class="lead">Taking a moment each day to notice the good things in your life can make a real difference. Gratitude Journal makes that habit easy. Open the app, answer a short daily prompt, write up to three things you're grateful for, and pick how you're feeling. It takes about a minute.</p>
+      <p class="lead">Over time, your entries build into a personal record you can look back on, with streaks and simple insights that show your progress.</p>
+    </section>
+
+    <section class="wrap" id="features" aria-labelledby="features-title">
+      <h2 id="features-title">Features</h2>
+      <p class="lead">Everything you need for a daily gratitude practice, and nothing you don't.</p>
+      <div class="grid">
+        <article class="item">
+          <h3>Three good things a day</h3>
+          <p>Write up to three things you're grateful for each day, with a fresh prompt to help you get started.</p>
+        </article>
+        <article class="item">
+          <h3>Mood tracking</h3>
+          <p>Record how you feel in one tap: Awful, Bad, Okay, Good or Amazing.</p>
+        </article>
+        <article class="item">
+          <h3>Streaks</h3>
+          <p>See your current streak, your best streak and your total entries right on the home screen.</p>
+        </article>
+        <article class="item">
+          <h3>History calendar</h3>
+          <p>Browse past months on a calendar, tap any day to reread it, and edit or delete entries.</p>
+        </article>
+        <article class="item">
+          <h3>Insights</h3>
+          <p>Completion rate, monthly activity, your most active journaling days, mood distribution and your most common words.</p>
+        </article>
+        <article class="item">
+          <h3>Light and dark themes</h3>
+          <p>Choose Light, Dark or follow your phone's system setting.</p>
+        </article>
+        <article class="item">
+          <h3>Easy editing</h3>
+          <p>Update any entry, or delete it with an undo option in case you change your mind.</p>
+        </article>
+        <article class="item">
+          <h3>You're in control</h3>
+          <p>Delete a single entry at any time, or clear all of your data from Settings.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <p class="lead">Three simple steps, once a day.</p>
+      <ol class="steps">
+        <li><div><strong>Tap the plus button</strong><span>Open today's page from the home screen.</span></div></li>
+        <li><div><strong>Write and pick a mood</strong><span>Use the daily prompt for ideas, add up to three things, then choose how you feel.</span></div></li>
+        <li><div><strong>Save and look back</strong><span>Watch your streak grow and revisit past days in History and Insights.</span></div></li>
+      </ol>
+    </section>
+
+    <section class="wrap" aria-labelledby="privacy-title">
+      <div class="privacy">
+        <h2 id="privacy-title">Your privacy</h2>
+        <ul>
+          <li>Your entries are stored on your own device.</li>
+          <li>The app does not use the internet and needs no account.</li>
+          <li>No ads, analytics, tracking or third-party SDKs.</li>
+          <li>Android's built-in backup can include your entries if you have it turned on.</li>
+        </ul>
+        <a class="button" href="gratitude-journal-privacy-policy.html">Read the Privacy Policy</a>
+      </div>
+    </section>
+
+    <section class="wrap" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <p class="lead">Questions, feedback or ideas? We'd love to hear from you at <a href="mailto:fine.furnishers105@gmail.com">fine.furnishers105@gmail.com</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year">2026</span> FINE FURNISHERS AND FOAM HOUSE (SMC-PRIVATE) LIMITED</p>
+    <p><a href="gratitude-journal-privacy-policy.html">Privacy Policy</a></p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
